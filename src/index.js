@@ -48,67 +48,6 @@ console.log("initial pocket data set");
 
 let pocketController = new TrichoidPocketController(pocket);
 
-/*
-
-let canvas = document.getElementById("canvas");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-let context = canvas.getContext("2d");
-
-context.fillStyle = "green";
-context.fillRect(0, 5, 150, 100);
-
-context.beginPath();
-context.moveTo( 5, 5 );
-context.lineTo( 5, canvas.height - 5 );
-context.lineTo( canvas.width - 5, canvas.height - 5 );
-context.lineTo( canvas.width - 5, 5 );
-context.lineTo( 5, 5 );
-context.lineWidth = 5;
-context.stroke();
-
-let xPadding = 5;
-let yPadding = 5;
-let inchWidth = 2;
-let inchScalar = (canvas.width - 10) / inchWidth;
-let inchHeight = Math.ceil((canvas.height -10) / inchScalar);
-context.beginPath();
-for(let i = 0; i < inchWidth; i++){
- context.moveTo(xPadding + ( inchScalar * i ), yPadding);
- context.lineTo(xPadding + ( inchScalar * i ), canvas.height-yPadding);
-}
-for(let i = 0; i < inchHeight; i++){
- context.moveTo(xPadding, yPadding + (inchScalar*i));
- context.lineTo(canvas.width - xPadding, yPadding+(inchScalar*i));
-}
-context.lineWidth = 3;
-context.stroke();
-
-context.beginPath();
-for(let i = 0; i < inchWidth * 10; i++){
- context.moveTo(xPadding + ( (inchScalar/10) * i ), yPadding);
- context.lineTo(xPadding + ( (inchScalar/10) * i ), canvas.height-yPadding);
-}
-for(let i = 0; i < inchHeight * 10; i++){
- context.moveTo(xPadding, yPadding + ((inchScalar/10)*i));
- context.lineTo(canvas.width - xPadding, yPadding+((inchScalar/10)*i));
-}
-context.lineWidth = 2;
-context.stroke();
-
-context.beginPath();
-for(let i = 0; i < inchWidth * 100; i++){
- context.moveTo(xPadding + ( (inchScalar/100) * i ), yPadding);
- context.lineTo(xPadding + ( (inchScalar/100) * i ), canvas.height-yPadding);
-}
-for(let i = 0; i < inchHeight * 100; i++){
- context.moveTo(xPadding, yPadding + ((inchScalar/100)*i));
- context.lineTo(canvas.width - xPadding, yPadding+((inchScalar/100)*i));
-}
-context.lineWidth = 1;
-context.stroke();
-
-*/
 // variable for the namespace
 const svgns = "http://www.w3.org/2000/svg";
 
@@ -121,11 +60,11 @@ svg.setAttribute(
 );
 //svg.viewBox()
 
-function createSVGPath(d) {
+function createSVGPath(d, width, color) {
   let newPath = document.createElementNS(svgns, "path");
   newPath.setAttribute("d", d);
-  newPath.setAttribute("stroke-width", "2");
-  newPath.setAttribute("stroke", "red");
+  newPath.setAttribute("stroke-width", width);
+  newPath.setAttribute("stroke", color);
   newPath.setAttribute("fill", "none");
   return newPath;
 }
@@ -199,7 +138,7 @@ function getSemiCircleXAtY(cx, cy, r, y) {
   //(x - cx)^2 = r^2 - (y - cy)^2
   //x - cx = sqrt(r^2 - (y-cy)^2)
   //x = sqrt(r^2 - (y-cy)^2) + cx
-  // x = cx = or - sqrt(r^2 - (y - cy)^2)
+  // x = cx + or - sqrt(r^2 - (y - cy)^2)
   let underSquare = Math.sqrt(r * r - Math.pow(y - cy, 2));
   return {
     plus: cx + underSquare,
@@ -207,16 +146,26 @@ function getSemiCircleXAtY(cx, cy, r, y) {
   };
 }
 
-function generatePath(cx, cy, radius, direction, step, distance) {
+//(x - cx)^2 + (y - cy)^2 = r^2
+
+function getArcCenter(x1, y1, x2, y2, r) {
+  let center = {
+    x: 0,
+    y: 0,
+  };
+  return center;
+}
+
+function generatePath(cx, cy, radius, width, step, distance, color) {
   let sx = cx + radius;
   let sy = cy;
   let ex = cx - radius;
   let ey = cy;
-  //let arcString = createSVGSemiCircle(cx, cy, radius, sx, sy, ex, ey);
+  let arcString = createSVGSemiCircle(cx, cy, radius, sx, sy, ex, ey);
 
-  let testPath = createSVGPath(arcString);
+  let testPath = createSVGPath("", width, color);
 
-  for (let i = 0; i < 500; i++) {
+  for (let i = 0; i < distance / step; i++) {
     let prevCenterY = cy + (i - 1) * step;
     let centerY = cy + i * step;
     let nextCenterY = cy + (i + 1) * 20;
@@ -257,32 +206,6 @@ function createMotionAnimation(motionPath, dur, reps) {
   return newMotion;
 }
 
-// make a simple rectangle
-let newRect = document.createElementNS(svgns, "rect");
-newRect.setAttribute("x", "150");
-newRect.setAttribute("y", "150");
-newRect.setAttribute("width", "100");
-newRect.setAttribute("height", "100");
-newRect.setAttribute("fill", "#5cceee");
-
-let newLine = document.createElementNS(svgns, "line");
-newLine.setAttribute("x1", "10");
-newLine.setAttribute("y1", "10");
-newLine.setAttribute("x2", "100");
-newLine.setAttribute("y2", "10");
-newLine.setAttribute("stroke-width", "10");
-newLine.setAttribute("stroke", "blue");
-
-// set attributes of new rectangle
-//gsap.set(newRect, {
-//  attr: { x: 150, y: 150, width: 100, height: 100, fill: "#5cceee" }
-//});
-
-// append the new rectangle to the svg
-svg.appendChild(newRect);
-svg.appendChild(newLine);
-svg.appendChild(createSVGLine(25, 150, 150, 25, 1, "red"));
-
 let xPadding = 5;
 let yPadding = 5;
 let inchWidth = 2;
@@ -320,45 +243,18 @@ for (let i = 0; i < inchHeight + 1; i++) {
   svg.appendChild(createSVGLine(x1, y1, x2, y2, 5, "black"));
 }
 
-let arcString = createSVGSemiCircle(100, 100, 50, 150, 100, 50, 100);
-console.log("arc");
-console.log(arcString);
+//let arcString = createSVGSemiCircle(100, 100, 50, 150, 100, 50, 100);
 
-let testPath = createSVGPath(arcString);
-//console.log(testPath.getAttribute("d"));
-for (let i = 0; i < 100; i++) {
-  // arc start x = get semi circle x at y (cx, cy, radius, prevCenterY)
-  let arcStartX = getSemiCircleXAtY(100, 100 + i * 20, 50, 100 + (i - 1) * 20);
-  //new arc = create svg semi circle (cx, cy, radius, startX.plus, prevCenterY, ex, ey)
-  let newArc = createSVGSemiCircle(
-    100,
-    100 + i * 20,
-    50,
-    arcStartX.plus,
-    100 + (i - 1) * 20,
-    50,
-    100 + i * 20
-  );
-  //nextCenterY = cy + (i + 1) * step
-  //nextStartX = getSemiCircleXAtY(cx, nextCenterY, radius, lineEndY)
-  //connectingLine = ` L ${lineEndX.plus}, ${lineEndY}`
-  let lineEndY = 100 + i * 20;
-  let nextCenterY = 100 + (i + 1) * 20;
-  //lineEndX
-  let lineEndX = getSemiCircleXAtY(100, nextCenterY, 50, lineEndY);
-  let connectingLine = ` L ${lineEndX.plus}, ${lineEndY}`;
-  testPath.setAttribute(
-    "d",
-    testPath.getAttribute("d") + newArc + connectingLine
-  );
-}
-svg.appendChild(testPath);
-let functionPath = generatePath(500, 25, 50, { x: -1, y: 0 }, 30, 10);
+let functionPath = generatePath(500, 25, 50, 2, 30, 400, "red");
+let cutPath = generatePath(500, 25, 50, 70, 30, 400, "green");
+cutPath.setAttribute("stroke-dasharray", `${cutPath.getTotalLength() + 1} px`);
 
+svg.appendChild(cutPath);
 svg.appendChild(functionPath);
-let tool = createSVGCircle(0, 0, 35, 10, "green");
+
+let tool = createSVGCircle(0, 0, 35, 10, "blue");
 tool.appendChild(
-  createMotionAnimation(functionPath.getAttribute("d"), "1000", 2)
+  createMotionAnimation(functionPath.getAttribute("d"), "10", "5")
 );
 svg.appendChild(tool);
 
