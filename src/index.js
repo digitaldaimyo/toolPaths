@@ -7,7 +7,7 @@ import {
   Tool,
   ENTRYTYPE,
   ENTRYLOCATION,
-  TrichoidRectanglePocket
+  TrichoidRectanglePocket,
 } from "./TrichoidRectanglePocket.js";
 
 import { TrichoidPocketController } from "./TrichoidPocketController.js";
@@ -22,14 +22,14 @@ let finishParams = new CutParams(0, 0, 0, 0);
 
 let tools = {
   finishTool: new Tool(0),
-  roughingTool: new Tool(0)
+  roughingTool: new Tool(0),
 };
 
 let corners = [
   new Corner(0.125),
   new Corner(0.125),
   new Corner(0.125),
-  new Corner(0.125)
+  new Corner(0.125),
 ];
 console.log(corners);
 
@@ -179,7 +179,7 @@ function getSemiCircleEndpoints(cx, cy, radius, sa, ea) {
     sx: cx + radius * Math.cos((sa * Math.PI) / 180),
     sy: cy + radius * Math.sin((sa * Math.PI) / 180),
     ex: cx + radius * Math.cos((ea * Math.PI) / 180),
-    ey: cy + radius * Math.sin((ea * Math.PI) / 180)
+    ey: cy + radius * Math.sin((ea * Math.PI) / 180),
   };
 }
 
@@ -190,7 +190,7 @@ function getSemiCircleAnglesFromEndpoints(cx, cy, sx, sy, ex, ey) {
   let deltaYEnd = ey - cy;
   return {
     sa: (Math.atan2(deltaYStart, deltaXStart) * 180) / Math.PI,
-    ea: (Math.atan2(deltaYEnd, deltaXEnd) * 180) / Math.PI
+    ea: (Math.atan2(deltaYEnd, deltaXEnd) * 180) / Math.PI,
   };
 }
 
@@ -203,7 +203,7 @@ function getSemiCircleXAtY(cx, cy, r, y) {
   let underSquare = Math.sqrt(r * r - Math.pow(y - cy, 2));
   return {
     plus: cx + underSquare,
-    minus: cx - underSquare
+    minus: cx - underSquare,
   };
 }
 
@@ -249,8 +249,8 @@ function generatePath(cx, cy, radius, direction, step, distance) {
       */
 function createMotionAnimation(motionPath, dur, reps) {
   let newMotion = document.createElementNS(svgns, "animateMotion");
-  newMotion.setAttribute("dur", "dr");
-  newMotion.setAttribute("repeatCount", "reps");
+  newMotion.setAttribute("dur", dur);
+  newMotion.setAttribute("repeatCount", reps);
   newMotion.setAttribute("path", motionPath);
   console.log("motion path:");
   console.log(newMotion);
@@ -353,11 +353,13 @@ for (let i = 0; i < 100; i++) {
   );
 }
 svg.appendChild(testPath);
-let functionPath = generatePath(500, 25, 50, { x: -1, y: 0 }, 30, 100);
+let functionPath = generatePath(500, 25, 50, { x: -1, y: 0 }, 30, 10);
 
 svg.appendChild(functionPath);
 let tool = createSVGCircle(0, 0, 35, 10, "green");
-tool.appendChild(createMotionAnimation(functionPath.getAttribute("d")));
+tool.appendChild(
+  createMotionAnimation(functionPath.getAttribute("d"), "1000", 2)
+);
 svg.appendChild(tool);
 
 console.log("index.js finished");

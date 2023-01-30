@@ -1361,8 +1361,8 @@ function generatePath(cx, cy, radius, direction, step, distance) {
       */
 function createMotionAnimation(motionPath, dur, reps) {
   var newMotion = document.createElementNS(svgns, "animateMotion");
-  newMotion.setAttribute("dur", "dr");
-  newMotion.setAttribute("repeatCount", "reps");
+  newMotion.setAttribute("dur", dur);
+  newMotion.setAttribute("repeatCount", reps);
   newMotion.setAttribute("path", motionPath);
   console.log("motion path:");
   console.log(newMotion);
@@ -1451,10 +1451,10 @@ svg.appendChild(testPath);
 var functionPath = generatePath(500, 25, 50, {
   x: -1,
   y: 0
-}, 30, 100);
+}, 30, 10);
 svg.appendChild(functionPath);
 var tool = createSVGCircle(0, 0, 35, 10, "green");
-tool.appendChild(createMotionAnimation(functionPath.getAttribute("d")));
+tool.appendChild(createMotionAnimation(functionPath.getAttribute("d"), "1000", 2));
 svg.appendChild(tool);
 console.log("index.js finished");
 
