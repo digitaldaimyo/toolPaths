@@ -66,6 +66,7 @@ function createSVGPath(d, width, color) {
   newPath.setAttribute("stroke-width", width);
   newPath.setAttribute("stroke", color);
   newPath.setAttribute("fill", "none");
+  newPath.setAttribute("stroke-linejoin", "round");
   return newPath;
 }
 
@@ -206,6 +207,23 @@ function createMotionAnimation(motionPath, dur, reps) {
   return newMotion;
 }
 
+/*
+<animate
+      attributeName="rx"
+      values="0;5;0"
+      dur="10s"
+      repeatCount="indefinite" />
+      */
+function createAnimation(dur, reps, from, to) {
+  let newAnim = document.createElementNS(svgns, "animate");
+  newAnim.setAttribute("attributeName", "stroke-dashoffset");
+  newAnim.setAttribute("repeatCount", reps);
+  newAnim.setAttribute("dur", dur);
+  //newAnim.setAttribute("from", from);
+  newAnim.setAttribute("to", to);
+  return newAnim;
+}
+
 let xPadding = 5;
 let yPadding = 5;
 let inchWidth = 2;
@@ -245,16 +263,27 @@ for (let i = 0; i < inchHeight + 1; i++) {
 
 //let arcString = createSVGSemiCircle(100, 100, 50, 150, 100, 50, 100);
 
-let functionPath = generatePath(500, 25, 50, 2, 30, 400, "red");
-let cutPath = generatePath(500, 25, 50, 70, 30, 400, "green");
-cutPath.setAttribute("stroke-dasharray", `${cutPath.getTotalLength() + 1} px`);
+let functionPath = generatePath(500, 25, 50, 2, 5, 400, "red");
+let cutPath = generatePath(500, 25, 50, 70, 5, 400, "green");
+cutPath.setAttribute("stroke-dasharray", `${cutPath.getTotalLength() + 1}`);
+cutPath.setAttribute("stroke-dashoffset", `${cutPath.getTotalLength() + 1}`);
+/*
+<animate
+      attributeName="rx"
+      values="0;5;0"
+      dur="10s"
+      repeatCount="indefinite" />
+      */
+
+//cutPath.setAttribute("animation", "dash 5s linear");
 
 svg.appendChild(cutPath);
 svg.appendChild(functionPath);
-
+let cutPathAnim = createAnimation("300", "5", cutPath.getTotalLength(), 0);
+cutPath.appendChild(cutPathAnim);
 let tool = createSVGCircle(0, 0, 35, 10, "blue");
 tool.appendChild(
-  createMotionAnimation(functionPath.getAttribute("d"), "10", "5")
+  createMotionAnimation(functionPath.getAttribute("d"), "30", "5")
 );
 svg.appendChild(tool);
 
